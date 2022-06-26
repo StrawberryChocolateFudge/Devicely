@@ -1,7 +1,8 @@
 import express from "express";
 import { Request, Response } from "express";
-import db from "../db";
-
+import db from "../db.js";
+import { client } from "../app.js";
+import { CID } from "ipfs-http-client";
 const router = express.Router();
 
 /* GET home page. */
@@ -15,10 +16,30 @@ router.get(
   },
   function (req: any, res: any, next: any) {
     res.locals.filter = null;
+    db.all(
+      "SELECT * FROM devices WHERE shippingRequested = false",
+      [],
+      async function (err, row) {
+        if (err) {
+          next(err);
+        }
+        let myDevices = [];
 
-    // select all devices where shippingRequested is false
-
-    res.render("index", { user: req.user });
+        for (let i = 0; i < row.length; i++) {
+          let r = row[i];
+          const data = await ipfsCAT(r.dataPath);
+          const d = JSON.parse(data);
+          myDevices.push({
+            videoPath: "http://ipfs.localhost:8080/ipfs/" + r.videoPath,
+            name: d.name,
+            desc: d.description,
+            shippingRequested: r.shippingRequested,
+            shipped: r.shipped,
+          });
+        }
+        res.render("index", { user: req.user, myDevices });
+      }
+    );
   }
 );
 
@@ -30,10 +51,43 @@ router.get(
     }
     next();
   },
-  function (req: Request, res: Response) {
-    res.render("mydevices", { user: req.user });
+  function (req: Request, res: Response, next: CallableFunction) {
+    db.all(
+      "SELECT * FROM devices WHERE owner_id = ?",
+      //@ts-ignore
+      [req.user.id],
+      async function (err, row) {
+        if (err) {
+          next(err);
+        }
+        let myDevices = [];
+
+        for (let i = 0; i < row.length; i++) {
+          let r = row[i];
+          const data = await ipfsCAT(r.dataPath);
+          const d = JSON.parse(data);
+          myDevices.push({
+            videoPath: "http://ipfs.localhost:8080/ipfs/" + r.videoPath,
+            name: d.name,
+            desc: d.description,
+            shippingRequested: r.shippingRequested,
+            shipped: r.shipped,
+          });
+        }
+
+        res.render("mydevices", { user: req.user, myDevices });
+      }
+    );
   }
 );
+
+async function ipfsCAT(cid: string) {
+  const chunks = [];
+  for await (const chunk of client.cat(cid, { timeout: 1000 })) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks).toString();
+}
 
 router.get(
   "/newdevice",
@@ -52,27 +106,35 @@ router.post(
   "/newdevice",
   async function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.end({ error: true });
+      return res.json({ error: true });
     }
 
     const { videoPath, dataPath } = req.body;
-    console.log(videoPath);
-    console.log(dataPath);
+
+    // Pin the CID to local IPFS Node
+    const videoCID = CID.parse(videoPath);
+    await client.pin.add(videoCID);
+
+    const detailsCID = CID.parse(dataPath);
+    await client.pin.add(detailsCID);
+
     db.run(
-      "INSERT INTO devices (owner_Id,videoPath,dataPath,shippingRequested) VALUES (?,?,?)",
-      //@ts-ignore
-      [req.user.id, videoPath, dataPath, false],
+      "INSERT INTO devices (owner_id,videoPath,dataPath,shippingRequested,shipped) VALUES (?,?,?,?,?)",
+      [
+        //@ts-ignore
+        req.user.id,
+        videoPath,
+        dataPath,
+        false,
+        false,
+      ],
       function (err) {
         if (err) {
           return next(err);
         }
-        res.end({ error: false });
+        return res.json({ error: false });
       }
     );
-
-    // TODO: after saving in the database, pin the CIDS to the local IPFS node!!
-    // MAYBE USE A CLI VERSION OF GOIPFS TO PIN THERE!
-    // THEN I USE A LOCAL VERSION OF GOIPFS TO PIN STUFF!
   }
 );
 
