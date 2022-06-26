@@ -389,3 +389,40 @@ html .clear-completed:active {
 	box-shadow: 0 0 2px 2px #CF7D7D;
 	outline: 0;
 }
+
+
+.customButton{
+	background-color: gainsboro;
+	padding: 10;
+	margin: 10;
+	cursor: pointer;
+}
+
+ .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      /* Position the tooltip */
+      position: absolute;
+      z-index: 1;
+      top: -5px;
+      right: 105%;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+#errorSlot{
+	color: red;
+}
