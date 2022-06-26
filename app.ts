@@ -6,6 +6,10 @@ dotenv.config();
 import express from "express";
 
 import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
@@ -16,12 +20,17 @@ import connectSqlite3 from "connect-sqlite3";
 
 const SQLiteStore = connectSqlite3(session);
 
-import indexRouter from "./routes/index";
-import authRouter from "./routes/auth";
+import pluralize from "pluralize";
 
+import indexRouter from "./routes/index.js";
+import authRouter from "./routes/auth.js";
+
+import * as ipfs from "ipfs-http-client";
+//@ts-ignore
+const client = ipfs.create("/ip4/127.0.0.1/tcp/5001");
 const app = express();
 
-app.locals.pluralize = require("pluralize");
+app.locals.pluralize = pluralize;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -60,3 +69,4 @@ app.use(function (err: any, req: any, res: any, next: any) {
 });
 
 export default app;
+export { client };
