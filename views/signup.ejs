@@ -33,6 +33,9 @@
             required
           />
         </section>
+        <% if (error) { %>
+        <h2><%= errorMessage %></h2>
+        <% } %>
         <button type="submit">Sign up</button>
       </form>
       <hr />

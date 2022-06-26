@@ -14,6 +14,11 @@
         <ul>
           <li class="user"><%= user.name || user.username || user.email %></li>
           <li>
+            <form action="/mydevices" method="get">
+              <button class="" type="submit">My Devices</button>
+            </form>
+          </li>
+          <li>
             <form action="/logout" method="post">
               <button class="logout" type="submit">Sign out</button>
             </form>
@@ -22,17 +27,6 @@
       </nav>
       <header class="header">
         <h1>Devicely</h1>
-        <form action="/" method="post">
-          <input
-            class="new-todo"
-            name="title"
-            placeholder="Add a new Device"
-            autofocus
-          />
-          <% if (filter) { %>
-          <input type="hidden" name="filter" value="<%= filter %>" />
-          <% } %>
-        </form>
       </header>
     </section>
     <footer class="info">
