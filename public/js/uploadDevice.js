@@ -1,4 +1,4 @@
-const ipfsParams = { host: "ipfs.infura.io", port: 5001, protocol: "https" };
+const ipfsParams = { host: "127.0.0.1", port: 5001, protocol: "http" };
 const ipfsClient = IpfsHttpClient.create(ipfsParams);
 
 const uploadBttn = document.getElementById("uploadButton");
@@ -67,10 +67,8 @@ async function uploadDevice() {
 
   // TODO: render loading indicator
 
-  //TODO: PING THE BACKEND WITH THE CIDs and redirect
   const body = JSON.stringify({ videoPath, dataPath });
 
-  console.log(body);
   const res = await fetch("/newdevice", {
     method: "POST",
     body,
@@ -79,13 +77,11 @@ async function uploadDevice() {
       "Content-Type": "application/json",
     },
   });
-  console.log(res);
   const result = await res.json();
-  console.log(result);
   if (result.error) {
     renderError("An error occured");
   } else {
-    window.location.href("/mydevices");
+    window.location.href = "/mydevices";
   }
 }
 
