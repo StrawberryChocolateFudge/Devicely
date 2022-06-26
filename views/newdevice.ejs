@@ -95,14 +95,15 @@
         </tr>
         <tr>
           <td>
-            <label for="shippingPrice">Shipping Price (USD) </label>
+            <label for="shippingPrice"> Price (USD) </label>
           </td>
           <td><input type="number" id="shippingPrice" /></td>
           <td>
             <div class="tooltip">
               ?
               <span aria-label="Tooltip helptext" class="tooltiptext"
-                >Leave empty if you send it for free.</span
+                >Leave empty if you send it for free. Always include shipping in
+                the price.</span
               >
             </div>
           </td>
@@ -389,11 +390,11 @@
         <tr>
           <td>
             <form action="/mydevices" method="get">
-              <button type="submit" class="customButton">Back</button>
+              <button type="submit" class="btn default">Back</button>
             </form>
           </td>
           <td>
-            <button class="customButton" id="uploadButton">Upload</button>
+            <button class="btn success" id="uploadButton">Upload</button>
           </td>
         </tr>
       </table>
