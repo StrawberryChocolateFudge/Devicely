@@ -29,7 +29,7 @@
   "license": "Unlicense",
   "scripts": {
     "clean": "rimraf dist/*",
-    "copy-assets": "ts-node tools/copyAssets",
+    "copy-assets": "cp -R views dist/ && cp -R public dist/",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "tsc": "tsc",
     "build": "npm-run-all clean tsc copy-assets",
@@ -49,6 +49,8 @@
     "http-errors": "~1.6.3",
     "ipfs": "^0.63.5",
     "ipfs-core": "^0.15.4",
+    "ipfs-core-types": "^0.11.1",
+    "ipfs-http-client": "^57.0.3",
     "mkdirp": "^1.0.4",
     "morgan": "~1.9.1",
     "passport": "^0.6.0",
@@ -68,6 +70,7 @@
     "@types/node": "^18.0.0",
     "@types/passport": "^1.0.9",
     "@types/passport-local": "^1.0.34",
+    "@types/pluralize": "^0.0.29",
     "@types/shelljs": "^0.8.11",
     "@types/sqlite3": "^3.1.8",
     "concurrently": "^7.2.2",
@@ -79,5 +82,6 @@
     "ts-node": "^10.8.1",
     "tslint": "^6.1.3",
     "typescript": "^4.7.4"
-  }
+  },
+  "type": "module"
 }
