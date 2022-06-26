@@ -31,8 +31,23 @@
     </section>
     <section>
       <form action="/newdevice" method="get">
-        <button type="submit"><h3>Add New Device</h3></button>
+        <button class="btn success" type="submit">Add New Device</button>
       </form>
+    </section>
+    <hr />
+    <section>
+      <div class="devicesList">
+        <% for (let i = 0; i < myDevices.length; i++){ %>
+        <div class="devicesCard">
+          <video width="250" height="250" controls name="media">
+            <source src="<%=myDevices[i].videoPath %>" type="video/mp4" />
+          </video>
+          <h4 class="text-align-center"><%=myDevices[i].name %></h4>
+          <button class="btn success">EDIT</button>
+          <hr />
+        </div>
+        <% } %>
+      </div>
     </section>
     <footer class="info">
       <p>
