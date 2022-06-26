@@ -3,7 +3,7 @@ import passport from "passport";
 import * as passportLocal from "passport-local";
 const LocalStrategy = passportLocal.Strategy;
 import crypto from "crypto";
-import db from "../db";
+import db from "../db.js";
 const router = express.Router();
 
 passport.serializeUser(function (user: any, cb: any) {
