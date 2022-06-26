@@ -1,17 +1,18 @@
-var express = require("express");
-var passport = require("passport");
-var LocalStrategy = require("passport-local");
-var crypto = require("crypto");
-var db = require("../db");
-var router = express.Router();
+import express from "express";
+import passport from "passport";
+import * as passportLocal from "passport-local";
+const LocalStrategy = passportLocal.Strategy;
+import crypto from "crypto";
+import db from "../db";
+const router = express.Router();
 
-passport.serializeUser(function (user, cb) {
+passport.serializeUser(function (user: any, cb: any) {
   process.nextTick(function () {
     cb(null, { id: user.id, username: user.username });
   });
 });
 
-passport.deserializeUser(function (user, cb) {
+passport.deserializeUser(function (user: any, cb: any) {
   process.nextTick(function () {
     return cb(null, user);
   });
@@ -78,11 +79,11 @@ router.post("/logout", function (req, res, next) {
 });
 
 router.get("/signup", function (req, res, next) {
-  res.render("signup");
+  res.render("signup", { error: false, errorMessage: "" });
 });
 
 router.post("/signup", function (req, res, next) {
-  var salt = crypto.randomBytes(16);
+  const salt = crypto.randomBytes(16);
   crypto.pbkdf2(
     req.body.password,
     salt,
@@ -98,9 +99,12 @@ router.post("/signup", function (req, res, next) {
         [req.body.username, hashedPassword, salt],
         function (err) {
           if (err) {
-            return next(err);
+            return res.render("signup", {
+              error: true,
+              errorMessage: "The username is already taken!",
+            });
           }
-          var user = {
+          const user = {
             id: this.lastID,
             username: req.body.username,
           };
@@ -116,4 +120,4 @@ router.post("/signup", function (req, res, next) {
   );
 });
 
-module.exports = router;
+export default router;

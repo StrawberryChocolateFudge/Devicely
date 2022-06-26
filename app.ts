@@ -1,20 +1,25 @@
-require("dotenv").config();
+import createError from "http-errors";
+import dotenv from "dotenv";
 
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+dotenv.config();
 
-var passport = require("passport");
-var session = require("express-session");
+import express from "express";
 
-var SQLiteStore = require("connect-sqlite3")(session);
+import path from "path";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
 
-var indexRouter = require("./routes/index");
-var authRouter = require("./routes/auth");
+import passport from "passport";
+import session from "express-session";
 
-var app = express();
+import connectSqlite3 from "connect-sqlite3";
+
+const SQLiteStore = connectSqlite3(session);
+
+import indexRouter from "./routes/index";
+import authRouter from "./routes/auth";
+
+const app = express();
 
 app.locals.pluralize = require("pluralize");
 
@@ -44,7 +49,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err: any, req: any, res: any, next: any) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -54,4 +59,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+export default app;
