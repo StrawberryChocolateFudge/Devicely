@@ -12,10 +12,16 @@
     <section class="todoapp">
       <nav class="nav">
         <ul>
-          <li class="user"><%= user.name || user.username || user.email %></li>
+          <li class="user">
+            <form action="/settings" method="get">
+              <button type="submit">
+                <%= user.name || user.username || user.email %>
+              </button>
+            </form>
+          </li>
           <li>
             <form action="/" method="get">
-              <button class="" type="submit">Home</button>
+              <button type="submit">Home</button>
             </form>
           </li>
           <li>
@@ -25,10 +31,10 @@
           </li>
         </ul>
       </nav>
-      <header class="header">
-        <h1>My Devices</h1>
-      </header>
     </section>
+    <header class="header">
+      <h1>My Devices</h1>
+    </header>
     <section>
       <form action="/newdevice" method="get">
         <button class="btn success" type="submit">Add New Device</button>
@@ -43,7 +49,14 @@
             <source src="<%=myDevices[i].videoPath %>" type="video/mp4" />
           </video>
           <h4 class="text-align-center"><%=myDevices[i].name %></h4>
-          <button class="btn success">EDIT</button>
+          <form action="/editdevice" method="get">
+            <input
+              type="hidden"
+              name="deviceId"
+              value="<%=myDevices[i].id %>"
+            />
+            <button class="btn success" type="submit">EDIT</button>
+          </form>
           <hr />
         </div>
         <% } %>
