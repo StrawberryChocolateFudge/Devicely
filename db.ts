@@ -49,7 +49,8 @@ db.serialize(function () {
    country TEXT NOT NULL, \
    postCode TEXT NOT NULL, \
    fullName TEXT NOT NULL, \
-   state TEXT NOT NULL \
+   state TEXT NOT NULL, \
+   ethWalletAddress TEXT NOT NULL \
   )"
   );
 });
