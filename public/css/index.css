@@ -521,3 +521,11 @@ html .clear-completed:active {
 .default:hover {
   background: #e7e7e7;
 }
+
+.center{
+	margin: 0 auto
+}
+
+.width100Percent{
+	width: 100%;
+}
