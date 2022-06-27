@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-
+import fileUpload from "express-fileupload";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +37,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(logger("dev"));
+app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
