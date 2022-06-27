@@ -12,7 +12,13 @@
     <section class="todoapp">
       <nav class="nav">
         <ul>
-          <li class="user"><%= user.name || user.username || user.email %></li>
+          <li class="user">
+            <form action="/settings" method="get">
+              <button type="submit">
+                <%= user.name || user.username || user.email %>
+              </button>
+            </form>
+          </li>
           <li>
             <form action="/mydevices" method="get">
               <button class="" type="submit">My Devices</button>
@@ -25,11 +31,19 @@
           </li>
         </ul>
       </nav>
-      <header class="header">
-        <h1>Devicely</h1>
-      </header>
     </section>
+    <header class="header">
+      <h1>Devicely</h1>
+    </header>
     <section>
+      <hr />
+      <small
+        >Select an electronic device and save it from going to the garbage. 20
+        to 50 million metric tons of e-waste are disposed worldwide every
+        year.</small
+      >
+      <small>Be part of the solution, not the problem!</small>
+      <hr />
       <div class="devicesList">
         <% for (let i = 0; i < myDevices.length; i++){ %>
         <div class="devicesCard">
@@ -37,7 +51,7 @@
             <source src="<%=myDevices[i].videoPath %>" type="video/mp4" />
           </video>
           <h4 class="text-align-center"><%=myDevices[i].name %></h4>
-          <button class="btn success">EDIT</button>
+          <button class="btn default">More</button>
           <hr />
         </div>
         <% } %>
