@@ -2,7 +2,11 @@ import express from "express";
 import { Request, Response } from "express";
 import db from "../db.js";
 import { client } from "../app.js";
-import { CID } from "ipfs-http-client";
+import ejs from "ejs";
+import { validateEdit, validateNew } from "./validators.js";
+import { filterQueryBuilder, fromDBPrice, toDBPrice } from "./utils.js";
+import { count } from "console";
+
 const router = express.Router();
 const url = "http://ipfs.localhost:8080/ipfs/";
 
@@ -16,35 +20,35 @@ router.get(
     next();
   },
   function (req: any, res: any, next: any) {
-    res.locals.filter = null;
-    //TODO: ADD FILTERING FOR DEVICES BY LOCATION AND PRICE
-    db.all(
-      "SELECT * FROM devices WHERE shippingRequested = false",
-      [],
-      async function (err, row) {
-        if (err) {
-          next(err);
-        }
-        let myDevices = [];
+    const { search, country, sortby } = req.query;
 
-        for (let i = 0; i < row.length; i++) {
-          let r = row[i];
-          const data = await ipfsCAT(r.dataPath);
-          const d = JSON.parse(data);
-
-          //TODO: filter by country and price here!
-
-          myDevices.push({
-            videoPath: "http://ipfs.localhost:8080/ipfs/" + r.videoPath,
-            name: d.name,
-            desc: d.description,
-            shippingRequested: r.shippingRequested,
-            shipped: r.shipped,
-          });
-        }
-        res.render("index", { user: req.user, myDevices });
+    const query = filterQueryBuilder(search, country, sortby);
+    db.all(query[0], query[1], async function (err, row) {
+      if (err) {
+        next(err);
       }
-    );
+      let myDevices = [];
+
+      for (let i = 0; i < row.length; i++) {
+        let r = row[i];
+        myDevices.push({
+          videoPath: url + r.videoPath,
+          pagePath: url + r.pagePath,
+          name: r.name,
+          desc: r.description,
+          price: fromDBPrice(r.price),
+          shipped: r.shipped,
+          country: r.country,
+        });
+      }
+      res.render("index", {
+        user: req.user,
+        myDevices,
+        search,
+        country,
+        sortby,
+      });
+    });
   }
 );
 
@@ -69,15 +73,17 @@ router.get(
 
         for (let i = 0; i < row.length; i++) {
           let r = row[i];
-          const data = await ipfsCAT(r.dataPath);
-          const d = JSON.parse(data);
+
           myDevices.push({
             id: r.id,
             videoPath: url + r.videoPath,
-            name: d.name,
-            desc: d.description,
-            shippingRequested: r.shippingRequested,
-            shipped: r.shipped,
+            pagePath: url + r.pagePath,
+            name: r.name,
+            desc: r.description,
+            works: r.works,
+            shippingPrice: fromDBPrice(r.price),
+            stock: r.stock,
+            shipsTo: r.shipsTo,
           });
         }
 
@@ -86,14 +92,6 @@ router.get(
     );
   }
 );
-
-async function ipfsCAT(cid: string) {
-  const chunks = [];
-  for await (const chunk of client.cat(cid, { timeout: 1000 })) {
-    chunks.push(chunk);
-  }
-  return Buffer.concat(chunks).toString();
-}
 
 router.get(
   "/newdevice",
@@ -168,8 +166,6 @@ router.post(
       state,
     } = req.body;
 
-    // Check if the req.user.id has already a street address added
-
     db.get(
       "SELECT * FROM shipping WHERE owner_id = ?",
       //@ts-ignore
@@ -195,7 +191,6 @@ router.post(
             ],
             function (err) {
               if (err) {
-                console.log(err);
                 return res.status(400).send("An Error Occured!");
               }
               return res.redirect("settings");
@@ -228,19 +223,6 @@ router.post(
   }
 );
 
-//TODO: ADD THE DETAILS PAGE
-router.get(
-  "/details",
-  function (req: Request, res: Response, next: CallableFunction) {
-    if (!req.user) {
-      return res.render("home");
-    }
-    next();
-  },
-  function (req: Request, res: Response) {
-    res.render("details", { user: req.user });
-  }
-);
 router.get(
   "/editdevice",
   function (req: Request, res: Response, next: CallableFunction) {
@@ -259,14 +241,22 @@ router.get(
         if (err) {
           next(err);
         }
-        const data = await ipfsCAT(row.dataPath);
-        const d = JSON.parse(data);
-        res.render("editdevice", {
-          user: req.user,
-          deviceId: req.query.deviceId,
-          data: d,
-          videoPath: url + row.videoPath,
-        });
+
+        if (row == undefined) {
+          res.status(400).send("Unable to find device!");
+        } else {
+          res.render("editdevice", {
+            user: req.user,
+            deviceId: req.query.deviceId,
+            videoPath: url + row.videoPath,
+            name: row.name,
+            description: row.description,
+            works: row.works,
+            shippingPrice: fromDBPrice(row.price),
+            stock: row.stock,
+            shipsTo: row.shipsTo,
+          });
+        }
       }
     );
   }
@@ -276,7 +266,7 @@ router.post(
   "/editdevice",
   async function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.json({ error: true });
+      return res.status(400).send("You need to be logged in to edit a device.");
     }
     const {
       devicename,
@@ -285,29 +275,48 @@ router.post(
       shippingPrice,
       country,
       deviceId,
+      stock,
+      videoPath,
     } = req.body;
+
+    const valid = validateEdit(req.body);
+
+    if (!valid) {
+      return res.status(400).send("Invalid request body");
+    }
 
     let worksBool = false;
     if (works === "on") {
       worksBool = true;
     }
+    const page = await ejs.renderFile("views/device.ejs", {
+      videoPath,
+      name: devicename,
+      description: devicedescription,
+      works: worksBool,
+      shipsTo: country,
+      shippingPrice: shippingPrice,
+      stock: stock,
+    });
 
-    const dataPath = await client.add(
-      JSON.stringify({
-        name: devicename,
-        description: devicedescription,
-        works: worksBool,
-        shipsTo: country,
-        shippingPrice: shippingPrice,
-      })
-    );
+    const pagePath = await client.add(page);
 
-    await client.pin.add(dataPath.cid);
+    await client.pin.add(pagePath.cid);
 
     db.run(
-      "UPDATE devices SET dataPath = ? WHERE owner_id = ? AND id = ?",
-      //@ts-ignore
-      [dataPath.path, req.user.id, deviceId],
+      "UPDATE devices SET pagePath = ?, name = ?, description = ?,works = ?,shipsTo = ?,price = ?,stock = ? WHERE owner_id = ? AND id = ?",
+      [
+        pagePath.path,
+        devicename,
+        devicedescription,
+        worksBool,
+        country,
+        toDBPrice(shippingPrice),
+        stock,
+        //@ts-ignore
+        req.user.id,
+        deviceId,
+      ],
       async function (err) {
         if (err) {
           return next(err);
@@ -347,8 +356,20 @@ router.post(
       return res.redirect("/home");
     }
 
-    const { devicename, devicedescription, works, shippingPrice, country } =
-      req.body;
+    const {
+      devicename,
+      devicedescription,
+      works,
+      shippingPrice,
+      country,
+      stock,
+    } = req.body;
+
+    const valid = validateNew(req.body);
+    if (!valid) {
+      return res.status(400).send("Invalid request body");
+    }
+
     // Works comes back as a string so I convert to boolean quick.
     let worksBool = false;
     if (works === "on") {
@@ -363,30 +384,35 @@ router.post(
     //@ts-ignore
     const videoPath = await client.add(req.files.devicevid.data);
 
-    const dataPath = await client.add(
-      JSON.stringify({
-        name: devicename,
-        description: devicedescription,
-        works: worksBool,
-        shipsTo: country,
-        shippingPrice: shippingPrice,
-      })
-    );
+    const page = await ejs.renderFile("views/device.ejs", {
+      videoPath,
+      name: devicename,
+      description: devicedescription,
+      works: worksBool,
+      shipsTo: country,
+      shippingPrice: shippingPrice,
+      stock: stock,
+    });
 
+    const pagePath = await client.add(page);
     // // Pin the CID to local IPFS Node
     await client.pin.add(videoPath.cid);
 
-    await client.pin.add(dataPath.cid);
+    await client.pin.add(pagePath.cid);
 
     db.run(
-      "INSERT INTO devices (owner_id,videoPath,dataPath,shippingRequested,shipped) VALUES (?,?,?,?,?)",
+      "INSERT INTO devices (owner_id,videoPath,pagePath,name,description,works,shipsTo,price,stock) VALUES (?,?,?,?,?,?,?,?,?)",
       [
         //@ts-ignore
         req.user.id,
         videoPath.path,
-        dataPath.path,
-        false,
-        false,
+        pagePath.path,
+        devicename,
+        devicedescription,
+        worksBool,
+        country,
+        toDBPrice(shippingPrice),
+        stock,
       ],
       function (err) {
         if (err) {
