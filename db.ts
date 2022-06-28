@@ -34,9 +34,13 @@ db.serialize(function () {
     id INTEGER PRIMARY KEY, \
     owner_id INTEGER NOT NULL, \
     videoPath TEXT NOT NULL, \
-    dataPath TEXT NOT NULL, \
-    shippingRequested BOOLEAN NOT NULL, \
-    shipped BOOLEAN NOT NULL \
+    pagePath TEXT NOT NULL, \
+    name TEXT NOT NULL,\
+    description TEXT NOT NULL,\
+    works TEXT NOT NULL,\
+    shipsTo TEXT NOT NULL,\
+    price INTEGER NOT NULL,\
+    stock TEXT NOT NULL\
   )"
   );
 
