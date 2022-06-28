@@ -55,7 +55,7 @@
                 minlength="2"
                 id="devicename"
                 type="text"
-                value="<%=data.name %>"
+                value="<%=name %>"
               />
             </td>
             <td>
@@ -78,7 +78,7 @@
                 name="devicedescription"
                 id="deviceDescription"
               >
-<%=data.description %></textarea
+<%=description %></textarea
               >
             </td>
             <td>
@@ -99,7 +99,7 @@
                 name="works"
                 type="checkbox"
                 id="deviceWorks"
-                data-checkit="<%=data.works %>"
+                data-checkit="<%=works %>"
               />
             </td>
             <td>
@@ -119,8 +119,9 @@
               <input
                 name="shippingPrice"
                 type="number"
+                step="0.01"
                 id="shippingPrice"
-                value="<%=data.shippingPrice %>"
+                value="<%=shippingPrice %>"
               />
             </td>
             <td>
@@ -134,12 +135,31 @@
             </td>
           </tr>
           <tr>
+            <td><label for="stock">Stock</label></td>
+            <td>
+              <input
+                name="stock"
+                type="number"
+                id="stock"
+                value="<%=stock %>"
+              />
+            </td>
+            <td>
+              <div class="tooltip">
+                ?
+                <span aria-label="Tooltip helptext" class="tooltiptext"
+                  >How many is in stock? It will decrement with each sale!</span
+                >
+              </div>
+            </td>
+          </tr>
+          <tr>
             <td><label for="ships-to">Ships to</label></td>
             <td>
               <select
                 id="ships-to"
                 name="country"
-                data-toSelect="<%=data.shipsTo %>"
+                data-toSelect="<%=shipsTo %>"
               >
                 <option>select country</option>
                 <option value="EU">Europe</option>
@@ -421,6 +441,7 @@
           </tr>
           <tr>
             <td>
+              <input type="hidden" name="videoPath" value="<%=videoPath %>" />
               <button class="btn success" id="uploadButton" type="submit">
                 Update
               </button>
@@ -461,7 +482,8 @@
     select.value = toSelect;
     const deviceWorksEl = document.getElementById("deviceWorks");
     const checkit = deviceWorksEl.dataset.checkit;
-    if (checkit === "true") {
+
+    if (checkit === "1") {
       deviceWorksEl.checked = true;
     } else {
       deviceWorksEl.checked = false;
