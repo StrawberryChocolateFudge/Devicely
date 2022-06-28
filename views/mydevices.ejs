@@ -45,18 +45,21 @@
       <div class="devicesList">
         <% for (let i = 0; i < myDevices.length; i++){ %>
         <div class="devicesCard">
-          <video width="250" height="250" controls name="media">
+          <video width="200" height="200" controls name="media">
             <source src="<%=myDevices[i].videoPath %>" type="video/mp4" />
           </video>
           <h4 class="text-align-center"><%=myDevices[i].name %></h4>
-          <form action="/editdevice" method="get">
-            <input
-              type="hidden"
-              name="deviceId"
-              value="<%=myDevices[i].id %>"
-            />
-            <button class="btn success" type="submit">EDIT</button>
-          </form>
+          <div class="row">
+            <form action="/editdevice" method="get">
+              <input
+                type="hidden"
+                name="deviceId"
+                value="<%=myDevices[i].id %>"
+              />
+              <button class="btn success" type="submit">EDIT</button>
+            </form>
+            <a class="btn links" href="<%=myDevices[i].pagePath%>">Link</a>
+          </div>
           <hr />
         </div>
         <% } %>
