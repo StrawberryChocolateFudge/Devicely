@@ -440,7 +440,6 @@ html .clear-completed:active {
 	justify-content: start;
 	margin-right: 20px;
 	margin-top: 20px;
-	margin: 0 auto;
 }
 
 .text-align-center{
@@ -479,16 +478,16 @@ html .clear-completed:active {
   color: white;
 }
 
-/* Blue
-.info {
+
+.links {
   border-color: #2196F3;
   color: dodgerblue;
 }
 
-.info:hover {
+.links:hover {
   background: #2196F3;
   color: white;
-} */
+}
 
 /* Orange */
 .warning {
@@ -529,3 +528,17 @@ html .clear-completed:active {
 .width100Percent{
 	width: 100%;
 }
+
+.deviceFilter{
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+}
+
+.row{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	
+}
+
