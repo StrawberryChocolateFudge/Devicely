@@ -122,7 +122,12 @@
               <label for="shippingPrice"> Price (USD) </label>
             </td>
             <td>
-              <input name="shippingPrice" type="number" id="shippingPrice" />
+              <input
+                name="shippingPrice"
+                type="number"
+                id="shippingPrice"
+                step="0.01"
+              />
             </td>
             <td>
               <div class="tooltip">
@@ -130,6 +135,18 @@
                 <span aria-label="Tooltip helptext" class="tooltiptext"
                   >Leave empty if you send it for free. Always include shipping
                   in the price.</span
+                >
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><label for="stock">Stock</label></td>
+            <td><input name="stock" type="number" id="stock" /></td>
+            <td>
+              <div class="tooltip">
+                ?
+                <span aria-label="Tooltip helptext" class="tooltiptext"
+                  >How many is in stock? It will decrement with each sale!</span
                 >
               </div>
             </td>
