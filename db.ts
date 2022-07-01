@@ -55,8 +55,8 @@ db.serialize(function () {
    postCode TEXT NOT NULL, \
    fullName TEXT NOT NULL, \
    state TEXT NOT NULL, \
-   ethWalletAddress TEXT NOT NULL, \
-   emailAddress TEXT NOT NULL\
+   ethWalletAddress TEXT NOT NULL UNIQUE, \
+   emailAddress TEXT NOT NULL UNIQUE\
   )"
   );
 
