@@ -33,3 +33,40 @@ export function validateNew(body: any): boolean {
   }
   return true;
 }
+
+export function validateSettings(body: any): boolean {
+  const props = [
+    "ethereumaddress",
+    "fullname",
+    "addressLine1",
+    "addressLine2",
+    "postcode",
+    "country",
+    "state",
+    "email",
+  ];
+
+  for (let i = 0; i < props.length; i++) {
+    if (body[props[i]] === undefined) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function validateCreateOrder(body: any): boolean {
+  const props = [
+    "escrowNumber",
+    "sellerAddress",
+    "buyerAddress",
+    "deviceHashIdentifier",
+    "price",
+  ];
+
+  for (let i = 0; i < props.length; i++) {
+    if (body[props[i]] === undefined) {
+      return false;
+    }
+  }
+  return true;
+}
