@@ -48,14 +48,14 @@
     <section>
       <table class="width100Percent">
         <tr>
-          <th>Index</th>
+          <th>Order</th>
           <th>Page</th>
           <th>Escrow</th>
           <th>Status</th>
         </tr>
         <% for (let i = 0; i < myorders.length; i++){ %>
         <tr>
-          <td class="text-align-center"><%=i%></td>
+          <td class="text-align-center"><%=myorders[i].id%></td>
           <td>
             <div class="tableButtonWrapper">
               <a href="/deviceLink?deviceId=<%=myorders[i].device %>">
