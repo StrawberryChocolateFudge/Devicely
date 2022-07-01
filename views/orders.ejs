@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Devicely | Trade used electronic devices</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <section class="todoapp">
+      <nav class="nav">
+        <ul>
+          <li class="user">
+            <form action="/settings" method="get">
+              <button type="submit">
+                <%= user.name || user.username || user.email %>
+              </button>
+            </form>
+          </li>
+          <li>
+            <form action="/" method="get">
+              <button class="" type="submit">Home</button>
+            </form>
+          </li>
+          <li>
+            <form action="/mydevices" method="get">
+              <button class="" type="submit">My Devices</button>
+            </form>
+          </li>
+          <li>
+            <form action="/orders" method="get">
+              <button type="submit">Orders</button>
+            </form>
+          </li>
+          <li>
+            <form action="/logout" method="post">
+              <button class="logout" type="submit">Sign out</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <header class="header">
+      <h1>My Orders</h1>
+    </header>
+    <section>
+      <table class="width100Percent">
+        <tr>
+          <th>Index</th>
+          <th>Page</th>
+          <th>Escrow</th>
+          <th>Status</th>
+        </tr>
+        <% for (let i = 0; i < myorders.length; i++){ %>
+        <tr>
+          <td class="text-align-center"><%=i%></td>
+          <td>
+            <div class="tableButtonWrapper">
+              <a href="/deviceLink?deviceId=<%=myorders[i].device %>">
+                <%=myorders[i].name %>
+              </a>
+            </div>
+          </td>
+          <td>
+            <div class="tableButtonWrapper">
+              <a
+                href="<%=escrowURL %>?escrow=<%=myorders[i].escrow_number %>&price=<%=myorders[i].price %>"
+                ><img src="/img/escrow.svg" width="50px"
+              /></a>
+            </div>
+          </td>
+
+          <td>
+            <div class="tableButtonWrapper">
+              <form action="/order" method="get">
+                <input
+                  name="orderid"
+                  type="hidden"
+                  value="<%=myorders[i].id %>"
+                />
+                <button type="submit" class="btn warning">
+                  <%=myorders[i].status %>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }%>
+      </table>
+    </section>
+    <hr />
+    <footer class="info">
+      <p>
+        Created by
+        <a href="https://github.com/StrawberryChocolateFudge"
+          >StrawberryChocolateFudge</a
+        >
+      </p>
+      <p>For the Sustainable Blockchain Hackathon</p>
+    </footer>
+  </body>
+</html>
