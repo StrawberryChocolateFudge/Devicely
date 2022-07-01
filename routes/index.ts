@@ -11,7 +11,12 @@ import { Request, Response } from "express";
 import db from "../db.js";
 import { client } from "../app.js";
 import ejs from "ejs";
-import { validateEdit, validateNew } from "./validators.js";
+import {
+  validateCreateOrder,
+  validateEdit,
+  validateNew,
+  validateSettings,
+} from "./validators.js";
 import {
   createDeviceIdentifier,
   escrowStateConverter,
@@ -148,6 +153,8 @@ router.get(
             country: "",
             state: "",
             email: "",
+            error: false,
+            errorMessage: "",
           });
         } else {
           return res.render("settings", {
@@ -160,6 +167,8 @@ router.get(
             country: row.country,
             state: row.state,
             email: row.emailAddress,
+            error: false,
+            errorMessage: "",
           });
         }
       }
@@ -173,6 +182,13 @@ router.post(
     if (!req.user) {
       return res.render("home");
     }
+
+    const valid = validateSettings(req.body);
+
+    if (!valid) {
+      return res.status(400).send("Invalid settings! Some field are missing!");
+    }
+
     const {
       ethereumaddress,
       fullname,
@@ -210,7 +226,25 @@ router.post(
             ],
             function (err) {
               if (err) {
-                return res.status(400).send("An Error Occured!");
+                let errorMessage = "An Error Occured";
+                //@ts-ignore
+                if (err.errno === 19) {
+                  errorMessage =
+                    "Somebody is already signed up with that Ethereum wallet or Email address!";
+                }
+                return res.render("settings", {
+                  user: req.user,
+                  ethaddr: row.ethWalletAddress,
+                  fullname: row.fullName,
+                  addressLine1: row.address_line_1,
+                  addressLine2: row.address_line_2,
+                  postcode: row.postCode,
+                  country: row.country,
+                  state: row.state,
+                  email: row.emailAddress,
+                  error: true,
+                  errorMessage,
+                });
               }
               return res.redirect("settings");
             }
@@ -232,7 +266,25 @@ router.post(
             ],
             function (err) {
               if (err) {
-                return res.status(400).send("An Error Occured!");
+                let errorMessage = "An Error Occured!";
+                //@ts-ignore
+                if (err.errno === 19) {
+                  errorMessage =
+                    "Somebody is already signed up with that Ethereum wallet or Email address!";
+                }
+                return res.render("settings", {
+                  user: req.user,
+                  ethaddr: row.ethWalletAddress,
+                  fullname: row.fullName,
+                  addressLine1: row.address_line_1,
+                  addressLine2: row.address_line_2,
+                  postcode: row.postCode,
+                  country: row.country,
+                  state: row.state,
+                  email: row.emailAddress,
+                  error: true,
+                  errorMessage,
+                });
               }
               return res.redirect("settings");
             }
@@ -386,6 +438,10 @@ router.post(
     }
     const deviceId = req.body.deviceId;
 
+    if (deviceId === undefined) {
+      return res.redirect("/editdevice");
+    }
+
     db.run(
       "DELETE FROM devices WHERE owner_id = ? AND id = ?",
       //@ts-ignore
@@ -524,9 +580,11 @@ router.get(
         }
         console.log(row);
 
-        //TODO: row is missing order id
-
-        res.render("orders", { user: req.user, myorders: row, escrowURL });
+        res.render("orders", {
+          user: req.user,
+          myorders: row.reverse(),
+          escrowURL,
+        });
       }
     );
   }
@@ -545,6 +603,12 @@ router.post(
       deviceHashIdentifier,
       price,
     } = req.body;
+
+    const valid = validateCreateOrder(req.body);
+
+    if (!valid) {
+      return res.status(400).send("Invalid Request");
+    }
 
     // Validate Escrow Number using web3.js!
 
@@ -646,6 +710,8 @@ router.post(
                             .status(400)
                             .send("Unable to decrement stock");
                         }
+
+                        //TODO: send email here
                         return res.status(200).send();
                       }
                     );
@@ -688,7 +754,6 @@ router.get(
     if (!req.user) {
       return res.redirect("/home");
     }
-    // TODO: enable and disable buttons based on the status of the order
 
     const { orderid } = req.query;
     db.get(
@@ -730,7 +795,6 @@ router.get(
                 fullName: buyerRow.fullName,
                 state: buyerRow.state,
               };
-              console.log(buyerDetails);
               return res.render("order", {
                 user: req.user,
                 ...buyerDetails,
@@ -762,7 +826,6 @@ router.post(
       return res.redirect("/home");
     }
     const { orderid } = req.body;
-    console.log(orderid);
     if (orderid === undefined) {
       return res.status(400).send("Invalid orderid");
     }
@@ -792,6 +855,8 @@ router.post(
             if (err) {
               return res.status(400).send("Unable to update order");
             }
+
+            //TODO: send email here
             return res.redirect("/order?orderid=" + orderid);
           }
         );
@@ -837,6 +902,8 @@ router.post(
             if (err) {
               return res.status(400).send("Unable to update order");
             }
+
+            //TODO: send email here
             return res.redirect("/order?orderid=" + orderid);
           }
         );
@@ -860,6 +927,19 @@ router.post(
 
     //TODO: SEND AN EMAIL ABOUT THE CHANGED ESCROW STATE
     // CHECK STATUS TO AVOID SENDING SPAM!
+  }
+);
+
+router.post(
+  "/dispute",
+  async function (req: Request, res: Response, next: CallableFunction) {
+    if (!req.user) {
+      res.status(400).send("Invalid user id");
+    }
+
+    const { escrowNr } = req.body;
+
+    //TODO: send an email to start resolveing this dispute!
   }
 );
 
