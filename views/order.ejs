@@ -107,6 +107,7 @@
           <td><label>Country:</label></td>
           <td><label><%=country %></label></td>
         </tr>
+        <% if(status === "Pending") {%>
         <tr>
           <td>
             <form action="/orderrejected" method="post">
@@ -121,6 +122,7 @@
             </form>
           </td>
         </tr>
+        <% } %>
       </table>
       <% } %>
     </header>
