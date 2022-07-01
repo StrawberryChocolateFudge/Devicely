@@ -8,6 +8,8 @@ WORK IN PROGRESS
 
         npm install -g go-ipfs
 
+        ipfs init
+
         ipfs daemon
 
 ## Dev
