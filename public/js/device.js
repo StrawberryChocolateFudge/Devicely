@@ -8,6 +8,7 @@ const sellerAddress = buyButton.dataset.selleraddress;
 const serverAddress = buyButton.dataset.serveraddress;
 const deviceHashIdentifier = buyButton.dataset.devicehashidentifier;
 const shippingPrice = buyButton.dataset.price;
+const escrowURL = buyButton.dataset.escrowurl;
 
 buyButton.onclick = async function () {
   const web3 = getWeb3();
@@ -18,7 +19,6 @@ buyButton.onclick = async function () {
   const acceptedTerms = await getAcceptedTerms(contract, address);
   if (!acceptedTerms) {
     const termsUrl = await getTerms(contract, address);
-    // termsLinkAnchor.href = termsUrl;
     alertMe("info", termsUrl);
   } else {
     const onError = (err, receipt) => {
@@ -40,7 +40,7 @@ buyButton.onclick = async function () {
         price: shippingPrice,
       });
 
-      await fetchCreateOrder(body);
+      await fetchCreateOrder(body, escrowNumber, shippingPrice);
     };
     alertMe("wait", "");
 
@@ -56,7 +56,7 @@ buyButton.onclick = async function () {
   }
 };
 
-async function fetchCreateOrder(body) {
+async function fetchCreateOrder(body, escrowNumber, price) {
   try {
     const res = await fetch(serverAddress + "createOrder", {
       method: "POST",
@@ -69,7 +69,7 @@ async function fetchCreateOrder(body) {
     if (res.status === 200) {
       // redirect to the escrow page
       // with the escrow number and price!
-      window.location = `${serverAddress}orders`;
+      window.location = `${escrowURL}?escrow=${escrowNumber}&price=${price}`;
     } else {
       //Render an error
       alertMe("red", await res.text());
