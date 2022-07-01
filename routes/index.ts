@@ -578,7 +578,6 @@ router.get(
         if (err) {
           next(err);
         }
-        console.log(row);
 
         res.render("orders", {
           user: req.user,
@@ -835,7 +834,6 @@ router.post(
       [orderid],
       function (error, order) {
         if (error) {
-          console.log(error);
           return res.status(400).send("Invalid orderid");
         }
         //@ts-ignore
