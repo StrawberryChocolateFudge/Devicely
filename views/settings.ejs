@@ -21,7 +21,17 @@
           </li>
           <li>
             <form action="/" method="get">
-              <button type="submit">Home</button>
+              <button class="" type="submit">Home</button>
+            </form>
+          </li>
+          <li>
+            <form action="/mydevices" method="get">
+              <button class="" type="submit">My Devices</button>
+            </form>
+          </li>
+          <li>
+            <form action="/orders" method="get">
+              <button type="submit">Orders</button>
             </form>
           </li>
           <li>
@@ -62,6 +72,27 @@
               ?
               <span aria-label="Tooltip helptext" class="tooltiptext"
                 >Copy your ethereum address from your wallet</span
+              >
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="email">Email Address</label></td>
+          <td>
+            <input
+              id="email"
+              required
+              name="email"
+              type="email"
+              class="width100Percent"
+              value="<%=email %>"
+            />
+          </td>
+          <td>
+            <div class="tooltip">
+              ?
+              <span aria-label="Tooltip helptext" class="tooltiptext"
+                >Add your email address so we can send notifications!</span
               >
             </div>
           </td>

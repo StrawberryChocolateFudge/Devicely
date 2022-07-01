@@ -25,6 +25,16 @@
             </form>
           </li>
           <li>
+            <form action="/mydevices" method="get">
+              <button class="" type="submit">My Devices</button>
+            </form>
+          </li>
+          <li>
+            <form action="/orders" method="get">
+              <button type="submit">Orders</button>
+            </form>
+          </li>
+          <li>
             <form action="/logout" method="post">
               <button class="logout" type="submit">Sign out</button>
             </form>
@@ -120,6 +130,7 @@
                 name="shippingPrice"
                 type="number"
                 step="0.01"
+                max="800"
                 id="shippingPrice"
                 value="<%=shippingPrice %>"
               />
