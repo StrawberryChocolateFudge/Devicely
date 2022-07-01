@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Devicely | Trade used electronic devices</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <section class="todoapp">
+      <nav class="nav">
+        <ul>
+          <li class="user">
+            <form action="/settings" method="get">
+              <button type="submit">
+                <%= user.name || user.username || user.email %>
+              </button>
+            </form>
+          </li>
+          <li>
+            <form action="/" method="get">
+              <button class="" type="submit">Home</button>
+            </form>
+          </li>
+          <li>
+            <form action="/mydevices" method="get">
+              <button class="" type="submit">My Devices</button>
+            </form>
+          </li>
+          <li>
+            <form action="/orders" method="get">
+              <button type="submit">Orders</button>
+            </form>
+          </li>
+          <li>
+            <form action="/logout" method="post">
+              <button class="logout" type="submit">Sign out</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <header class="header">
+      <h1>Order</h1>
+      <table class="center width100Percent">
+        <tr>
+          <td><label>Status: </label></td>
+          <td><label><%=status%></label></td>
+        </tr>
+        <tr>
+          <td><label>Seller: </label></td>
+          <td><label><%=seller_address%></label></td>
+        </tr>
+        <tr>
+          <td>
+            <label>Buyer: </label>
+          </td>
+          <td>
+            <label><%=buyer_address %></label>
+          </td>
+        </tr>
+        <tr>
+          <td><label>Price: </label></td>
+          <td><label><%=price %> USD</label></td>
+        </tr>
+        <tr>
+          <td><label>Escrow State:</label></td>
+          <td><label><%=escrowState%></label></td>
+        </tr>
+        <tr>
+          <td><label>Dispute:</label></td>
+
+          <td>
+            <form action="/dispute" method="post">
+              <button type="submit" class="btn danger">Request</button>
+            </form>
+          </td>
+        </tr>
+      </table>
+
+      <% if (selling) {%>
+      <h3>Shipping Address:</h3>
+      <table class="center width100Percent">
+        <tr>
+          <td><label>Full Name: </label></td>
+          <td><label><%=fullName %></label></td>
+        </tr>
+        <tr>
+          <td><label>Address Line 1: </label></td>
+          <td><label><%=address_line_1%></label></td>
+        </tr>
+        <tr>
+          <td><label>Address Line 2</label></td>
+          <td><label><%=address_line_2%></label></td>
+        </tr>
+        <tr>
+          <td><label>Postcode:</label></td>
+          <td><label><%=postCode %></label></td>
+        </tr>
+        <tr>
+          <td><label>State:</label></td>
+          <td><label><%=state %></label></td>
+        </tr>
+        <tr>
+          <td><label>Country:</label></td>
+          <td><label><%=country %></label></td>
+        </tr>
+        <tr>
+          <td>
+            <form action="/orderrejected" method="post">
+              <input type="hidden" value="<%=orderid %>" name="orderid" />
+              <button type="submit" class="btn warning">Reject</button>
+            </form>
+          </td>
+          <td>
+            <form action="/ordershipped" method="post">
+              <input type="hidden" value="<%=orderid %>" name="orderid" />
+              <button type="submit" class="btn success">Mark Shipped</button>
+            </form>
+          </td>
+        </tr>
+      </table>
+      <% } %>
+    </header>
+
+    <footer class="info">
+      <p>
+        Created by
+        <a href="https://github.com/StrawberryChocolateFudge"
+          >StrawberryChocolateFudge</a
+        >
+      </p>
+      <p>For the Sustainable Blockchain Hackathon</p>
+    </footer>
+  </body>
+</html>
