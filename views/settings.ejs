@@ -507,6 +507,11 @@
         </form>
       </tr>
     </table>
+    <% if(error) {%>
+
+    <small class="danger"><%=errorMessage %></small>
+
+    <% } %>
     <footer class="info">
       <p>
         Created by
