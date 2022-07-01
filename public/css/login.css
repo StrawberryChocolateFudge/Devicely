@@ -53,7 +53,6 @@ h3 {
 	font-size: 24px;
 	font-weight: 300;
 	text-align: center;
-	color: #b83f45;
 }
 
 form section {
@@ -68,20 +67,6 @@ label {
 	font-weight: 500;
 }
 
-input {
-	box-sizing: border-box;
-	width: 100%;
-	padding: 10px;
-	font-size: 14px;
-	border: 1px solid #d9d9d9;
-	border-radius: 5px;
-}
-
-input[type=email]:not(:focus):invalid,
-input[type=password]:not(:focus):invalid {
-	color: red;
-	outline-color: red;
-}
 
 hr {
 	border-top: 1px solid #d9d9d9;

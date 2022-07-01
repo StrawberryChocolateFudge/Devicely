@@ -1,9 +1,9 @@
-.todohome {
+.homepage {
 	margin: 130px 0 40px 0;
 	position: relative;
 }
 
-.todohome h1 {
+.homepage h1 {
 	position: absolute;
 	top: -140px;
 	width: 100%;
@@ -16,18 +16,18 @@
 	text-rendering: optimizeLegibility;
 }
 
-.todohome section {
+.homepage section {
 	padding-top: 1px;
 	text-align: center;
 }
 
-.todohome h2 {
+.homepage h2 {
 	padding-bottom: 48px;
 	font-size: 28px;
 	font-weight: 300;
 }
 
-.todohome .button {
+.homepage .button {
 	padding: 13px 45px;
 	font-size: 16px;
 	font-weight: 500;
@@ -36,6 +36,6 @@
 	background: #d83f45;
 }
 
-.todohome a.button {
+.homepage a.button {
 	text-decoration: none;
 }
