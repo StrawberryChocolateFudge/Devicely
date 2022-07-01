@@ -4,18 +4,53 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Devicely | Trade used electronic devices</title>
-    <link rel="stylesheet" href="http://localhost:3000/css/base.css" />
-    <link rel="stylesheet" href="http://localhost:3000/css/index.css" />
-    <link rel="stylesheet" href="http://localhost:3000/css/app.css" />
+    <link rel="stylesheet" href="<%=basecssLink%>" />
+    <link rel="stylesheet" href="<%=indexcssLink%>" />
+    <link rel="stylesheet" href="<%=appcssLink%>" />
   </head>
   <body>
     <header class="header">
-      <h1>Devicely</h1>
+      <h1 class="text-align-center">Devicely</h1>
     </header>
     <section>
-      <h3><%=name %></h3>
-
+      <h3 class="text-align-center"><%=name %></h3>
+      <div class="text-align-center">
+        <video width="400" height="400" controls name="media">
+          <source src="<%=videoPath %>" type="video/mp4" />
+        </video>
+      </div>
+      <table class="center">
+        <tr>
+          <td><label>Ships to: </label></td>
+          <td><label><%=shipsTo%></label></td>
+        </tr>
+        <tr>
+          <td><label>Condition: </label></td>
+          <td><label><%=works%></label></td>
+        </tr>
+        <tr>
+          <td><label>Price: </label></td>
+          <td><label><%=shippingPrice %></label></td>
+        </tr>
+      </table>
       <p><%=description %></p>
+      <div id="alert" style="display: none" class="alert"></div>
+      <div class="text-align-center">
+        <button
+          class="btn danger"
+          data-devicehashidentifier="<%=deviceHashIdentifier %>"
+          data-sellerid="<%=sellerId%>"
+          data-selleraddress="<%=sellerAddress %>"
+          data-contractaddress="<%=contractAddress %>"
+          data-abi="<%=contractABI %>"
+          data-serveraddress="<%=serverAddress %>"
+          data-escrowurl="<%=escrowURL%>"
+          data-price="<%=shippingPrice%>"
+          id="buyButton"
+        >
+          Buy it now!
+        </button>
+      </div>
     </section>
 
     <footer class="info">
@@ -28,4 +63,6 @@
       <p>For the Sustainable Blockchain Hackathon</p>
     </footer>
   </body>
+  <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+  <script src="<%=scriptLink%>"></script>
 </html>
