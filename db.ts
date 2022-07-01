@@ -32,6 +32,7 @@ db.serialize(function () {
   db.run(
     "CREATE TABLE IF NOT EXISTS devices ( \
     id INTEGER PRIMARY KEY, \
+    deviceIdentifier INTEGER NOT NULL, \
     owner_id INTEGER NOT NULL, \
     videoPath TEXT NOT NULL, \
     pagePath TEXT NOT NULL, \
@@ -45,7 +46,7 @@ db.serialize(function () {
   );
 
   db.run(
-    "CREATE TABLE IF NOT EXISTS shipping( \
+    "CREATE TABLE IF NOT EXISTS userdetails( \
    id INTEGER PRIMARY KEY, \
    owner_id INTEGER NOT NULL, \
    address_line_1 TEXT NOT NULL, \
@@ -54,8 +55,25 @@ db.serialize(function () {
    postCode TEXT NOT NULL, \
    fullName TEXT NOT NULL, \
    state TEXT NOT NULL, \
-   ethWalletAddress TEXT NOT NULL \
+   ethWalletAddress TEXT NOT NULL, \
+   emailAddress TEXT NOT NULL\
   )"
+  );
+
+  db.run(
+    "CREATE TABLE IF NOT EXISTS orders( \
+    id INTEGER PRIMARY KEY, \
+    name TEXT NOT NULL,\
+    seller_id INTEGER NOT NULL, \
+    seller_address TEXT NOT NULL,\
+    buyer_id INTEGER NOT NULL, \
+    buyer_address TEXT NOT NULL,\
+    device INTEGER NOT NULL,\
+    escrow_number INTEGER NOT NULL, \
+    price INTEGER NOT NULL, \
+    status TEXT NOT NULL, \
+    shipped BOOLEAN NOT NULL \
+    )"
   );
 });
 
