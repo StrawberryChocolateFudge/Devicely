@@ -541,4 +541,30 @@ html .clear-completed:active {
 	justify-content: space-between;
 	
 }
+.alert {
+  padding: 20px;
+  background-color: dodgerblue;
+  color: white;
+  margin-bottom: 20px;
+}
 
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+
+.tableButtonWrapper{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
