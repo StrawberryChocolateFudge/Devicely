@@ -1,6 +1,7 @@
 import Web3 from "web3";
-import escrow from "../public/abi/Escrow.json";
+import fs from "fs";
 
+const escrow = JSON.parse(fs.readFileSync("./public/abi/Escrow.json", "utf-8"));
 let web3: Web3;
 
 export function getWeb3(rpc: string) {
