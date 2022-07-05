@@ -27,6 +27,12 @@ import {
 import { getWeb3 } from "../web3/web3.js";
 import { getContract } from "../web3/web3.js";
 import { getDetailByIndex } from "../web3/web3.js";
+import {
+  disputeRequested,
+  disputeResolverEmail,
+  orderStateChange,
+} from "../mails/messages.js";
+import { sendMail } from "../mails/nodemailer.js";
 
 const router = express.Router();
 
@@ -35,11 +41,18 @@ router.get(
   "/",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
     next();
   },
-  function (req: any, res: any, next: any) {
+  async function (req: any, res: any, next: any) {
+    // redirect to settings if the email and ethereum wallet address is empty
+    const isSettingsFilledOut = await GETisSettingsFilledOut(req.user.id);
+
+    if (!isSettingsFilledOut) {
+      return res.redirect("/settings");
+    }
+
     const { search, country, sortby } = req.query;
 
     const query = filterQueryBuilder(search, country, sortby);
@@ -76,7 +89,7 @@ router.get(
   "/mydevices",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
     next();
   },
@@ -117,7 +130,7 @@ router.get(
   "/newdevice",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
     next();
   },
@@ -130,7 +143,7 @@ router.get(
   "/settings",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
 
     db.get(
@@ -139,7 +152,7 @@ router.get(
       [req.user.id],
       function (err, row) {
         if (err) {
-          return res.render("home");
+          return res.redirect("/home.html");
         }
 
         if (row === undefined) {
@@ -180,7 +193,7 @@ router.post(
   "/settings",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
 
     const valid = validateSettings(req.body);
@@ -234,14 +247,14 @@ router.post(
                 }
                 return res.render("settings", {
                   user: req.user,
-                  ethaddr: row.ethWalletAddress,
-                  fullname: row.fullName,
-                  addressLine1: row.address_line_1,
-                  addressLine2: row.address_line_2,
-                  postcode: row.postCode,
-                  country: row.country,
-                  state: row.state,
-                  email: row.emailAddress,
+                  ethaddr: ethereumaddress,
+                  fullname,
+                  addressLine1: addressLine1,
+                  addressLine2: addressLine2,
+                  postcode,
+                  country,
+                  state,
+                  email,
                   error: true,
                   errorMessage,
                 });
@@ -299,7 +312,7 @@ router.get(
   "/editdevice",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
 
     db.get(
@@ -434,7 +447,7 @@ router.post(
   "/deletedevice",
   async function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.render("home");
+      return res.redirect("/home.html");
     }
     const deviceId = req.body.deviceId;
 
@@ -460,7 +473,7 @@ router.post(
   "/newdevice",
   async function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.redirect("/home");
+      return res.redirect("/home.html");
     }
 
     const {
@@ -567,7 +580,7 @@ router.get(
   "/orders",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.redirect("/home");
+      return res.redirect("/home.html");
     }
 
     db.all(
@@ -729,7 +742,7 @@ router.get(
   "/deviceLink",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.redirect("/home");
+      return res.redirect("/home.html");
     }
 
     const { deviceId } = req.query;
@@ -751,7 +764,7 @@ router.get(
   "/order",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.redirect("/home");
+      return res.redirect("/home.html");
     }
 
     const { orderid } = req.query;
@@ -810,7 +823,7 @@ router.get(
             ...orderDetails,
           });
         } else {
-          return res.redirect("/home");
+          return res.redirect("/home.html");
         }
       }
     );
@@ -822,7 +835,7 @@ router.post(
   "/ordershipped",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.redirect("/home");
+      return res.redirect("/home.html");
     }
     const { orderid } = req.body;
     if (orderid === undefined) {
@@ -849,12 +862,18 @@ router.post(
         db.run(
           "UPDATE orders SET status = ? WHERE id = ?",
           ["Shipped", orderid],
-          function (err) {
+          async function (err) {
             if (err) {
               return res.status(400).send("Unable to update order");
             }
 
-            //TODO: send email here
+            const subject = `Your order ${orderid} has been shipped`;
+            const email = orderStateChange(orderid, "Shipped");
+            const buyerDetails: any = await getUserDetailsByOwnerId(
+              order.buyer_id
+            );
+            await sendMail(buyerDetails.emailAddress, subject, email);
+
             return res.redirect("/order?orderid=" + orderid);
           }
         );
@@ -867,7 +886,7 @@ router.post(
   "/orderrejected",
   function (req: Request, res: Response, next: CallableFunction) {
     if (!req.user) {
-      return res.redirect("/home");
+      return res.redirect("/home.html");
     }
 
     const { orderid } = req.body;
@@ -896,35 +915,24 @@ router.post(
         db.run(
           "UPDATE orders SET status = ? WHERE id = ?",
           ["Rejected", orderid],
-          function (err) {
+          async function (err) {
             if (err) {
               return res.status(400).send("Unable to update order");
             }
 
-            //TODO: send email here
+            const subject = `Your order ${orderid} has been rejected`;
+            const email = orderStateChange(orderid, "Rejected");
+            const buyerDetails: any = await getUserDetailsByOwnerId(
+              order.buyer_id
+            );
+
+            await sendMail(buyerDetails.emailAddress, subject, email);
+
             return res.redirect("/order?orderid=" + orderid);
           }
         );
       }
     );
-  }
-);
-
-// This endpoint is hit by the escrow front end and the app will update the DB on escrow status!
-// This is to send email!
-router.post(
-  "/escrowState",
-  async function (req: Request, res: Response, next: CallableFunction) {
-    if (!req.user) {
-      return res.redirect("/home");
-    }
-
-    const { escrowNr } = req.body;
-
-    const details = await getDetails(escrowNr);
-
-    //TODO: SEND AN EMAIL ABOUT THE CHANGED ESCROW STATE
-    // CHECK STATUS TO AVOID SENDING SPAM!
   }
 );
 
@@ -935,11 +943,109 @@ router.post(
       res.status(400).send("Invalid user id");
     }
 
-    const { escrowNr } = req.body;
+    const { orderid } = req.body;
+    console.log(orderid);
 
-    //TODO: send an email to start resolveing this dispute!
+    db.get(
+      "SELECT * FROM orders WHERE id = ?",
+      [orderid],
+      async function (error, order) {
+        if (error) {
+          return res.send(400).send("Unable to find escrow");
+        }
+
+        const details = await getDetails(order.escrow_number);
+
+        const escrowState = escrowStateConverter(details.state);
+
+        if (escrowState === "Delivered") {
+          return res.status(400).send("You can't raise a dispute");
+        }
+
+        let userRole = "NONE";
+        //@ts-ignore
+        if (order.buyer_id === req.user.id) {
+          userRole = "BUYER";
+          //@ts-ignore
+        } else if (order.seller_id === req.user.id) {
+          userRole = "SELLER";
+        }
+        // IF I don't find the role of the user, it returns 400
+        if (userRole === "NONE") {
+          return res.send(400).send("Not authorized");
+        }
+
+        const sellerDetails: any = await getUserDetailsByOwnerId(
+          order.seller_id
+        );
+        const buyerDetails: any = await getUserDetailsByOwnerId(order.buyer_id);
+        const disputeResolverEmailMSG = disputeResolverEmail(
+          order.id,
+          order.escrow_number,
+          escrowState,
+          order.status,
+          order.seller_address,
+          order.seller_id,
+          sellerDetails.fullName,
+          sellerDetails.email,
+          order.buyer_address,
+          order.buyer_id,
+          buyerDetails.fullName,
+          buyerDetails.email
+        );
+
+        const subject = `Dispute Resolution for escrow ${order.escrow_number}`;
+        try {
+          await sendMail(
+            process.env.AGENTEMAILADDRESS,
+            subject,
+            disputeResolverEmailMSG
+          );
+        } catch (err) {
+          return res
+            .status(400)
+            .send(
+              "Failed to notify escrow agent. Try again later or send us an email."
+            );
+        }
+
+        const disputeNotificationMessage = disputeRequested(
+          order.id,
+          order.escrow_number
+        );
+        console.log(sellerDetails.emailAddress);
+        console.log(buyerDetails.emailAddress);
+        await sendMail(
+          sellerDetails.emailAddress,
+          subject,
+          disputeNotificationMessage
+        );
+        await sendMail(
+          buyerDetails.emailAddress,
+          subject,
+          disputeNotificationMessage
+        );
+
+        return res.render("disputeRequestSuccess", { user: req.user });
+      }
+    );
   }
 );
+
+async function getUserDetailsByOwnerId(id: string) {
+  return await new Promise((resolve, reject) => {
+    db.get(
+      "SELECT * FROM userdetails WHERE owner_id = ?",
+      [id],
+      function (err, row) {
+        if (err) {
+          reject(err);
+        }
+        resolve(row);
+      }
+    );
+  });
+}
 
 async function getDetails(escrowid: string) {
   // FETCH ESCROW DETAILS FROM WEB3 AND USE IT TO UPDATE THE DB!
@@ -949,6 +1055,25 @@ async function getDetails(escrowid: string) {
 
   const details = await getDetailByIndex(contract, escrowid);
   return details;
+}
+
+async function GETisSettingsFilledOut(userid: string) {
+  return await new Promise((resolve, reject) => {
+    db.get(
+      "SELECT * FROM userdetails WHERE owner_id = ?",
+      [userid],
+      function (err, row) {
+        if (err) {
+          reject(err);
+        }
+        if (row === undefined) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      }
+    );
+  });
 }
 
 export default router;
