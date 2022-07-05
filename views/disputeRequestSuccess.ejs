@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Devicely | Trade used electronic devices</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <section class="devicelyapp">
+      <nav class="nav">
+        <ul>
+          <li class="user">
+            <form action="/settings" method="get">
+              <button type="submit">
+                <%= user.name || user.username || user.email %>
+              </button>
+            </form>
+          </li>
+          <li>
+            <form action="/" method="get">
+              <button class="" type="submit">Home</button>
+            </form>
+          </li>
+          <li>
+            <form action="/mydevices" method="get">
+              <button class="" type="submit">My Devices</button>
+            </form>
+          </li>
+          <li>
+            <form action="/orders" method="get">
+              <button type="submit">Orders</button>
+            </form>
+          </li>
+          <li>
+            <form action="/logout" method="post">
+              <button class="logout" type="submit">Sign out</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <header class="header">
+      <h1>Devicely</h1>
+    </header>
+    <section>
+	    <hr/>
+      <h4>
+        Your dispute request has been send. Please wait for the tech support to
+        contact you.
+      </h4>
+      <div class="text-align-center">
+	      <a class="btn default" type="button" href="/">Home</a>
+      </div>
+      <hr/>
+      </section>
+    </section>
+    <footer class="info">
+      <p>
+        Created by
+        <a href="https://github.com/StrawberryChocolateFudge"
+          >StrawberryChocolateFudge</a
+        >
+      </p>
+      <p>For the Sustainable Blockchain Hackathon</p>
+      <hr />
+      <a href="/help.html">Help</a>
+    </footer>
+  </body>
+</html>
