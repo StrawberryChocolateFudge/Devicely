@@ -386,7 +386,7 @@ router.post(
           return next(err);
         }
         const pageData = {
-          videoPath,
+          videoPath: videoPath.path,
           name: devicename,
           description: devicedescription,
           works: worksBool ? "Working" : "Doesn't work",
@@ -519,7 +519,7 @@ router.post(
         }
 
         const pageData = {
-          videoPath,
+          videoPath: videoPath.path,
           name: devicename,
           description: devicedescription,
           works: worksBool ? "Working" : "Doesn't work",
