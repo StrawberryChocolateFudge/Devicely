@@ -514,6 +514,10 @@ router.post(
           return next(err);
         }
 
+        if (row === undefined) {
+          return res.redirect("/settings");
+        }
+
         const pageData = {
           videoPath,
           name: devicename,
