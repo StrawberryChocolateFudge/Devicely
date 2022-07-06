@@ -1,16 +1,13 @@
 server {
-	#SSL only
+        #SSL only
         listen 443 ssl default_server;
         listen [::]:443 ssl default_server;
+
         ssl_certificate /etc/letsencrypt/live/devicely.xyz/fullchain.pem; # managed by Certbot
         ssl_certificate_key /etc/letsencrypt/live/devicely.xyz/privkey.pem; # managed by Certbot
         include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
-
-        #root /var/www/html;
-
-        #index index.html index.htm index.nginx-debian.html;
 
         server_name devicely.xyz;
 
@@ -30,12 +27,12 @@ server {
                 proxy_redirect off;
         }
 
-	location /ipfs {
-		proxy_pass http://localhost:8080;
-		proxy_set_header Host $host;
-		proxy_cache_bypass $http_upgrade;
-		allow all;
-	}
+        location /ipfs {
+                proxy_pass http://localhost:8080;
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+                allow all;
+        }
 
 
 }
@@ -43,7 +40,6 @@ server {
 server {
         listen 80;
         listen [::]:80;
-
         server_name _;
 
         return 301 https://$host$request_uri;
