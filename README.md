@@ -94,7 +94,7 @@ The third party is the escrow agent who provides the dispute resolution, he can 
 
 The job of the escrow agent is described in a ricardian contract that is directly connected to the escrow contract.
 
-The ricardian contract was created for with a project that I have been working on before, you can find more information about it [here](https://ricardianfabric.com).
+The ricardian contract was created with a project that I have been working on before, you can find more information about it [here](https://ricardianfabric.com).
 
 in a nutshell, a website is rendered from a legal written contract and it's uploaded to IPFS. It has a way to connect to a smart contract, similar to how an NFT is connected to an image.
 
