@@ -1052,7 +1052,6 @@ async function getUserDetailsByOwnerId(id: string) {
 }
 
 async function getDetails(escrowid: string) {
-  // FETCH ESCROW DETAILS FROM WEB3 AND USE IT TO UPDATE THE DB!
   const web3 = getWeb3(rpcURL);
 
   const contract = await getContract(web3, contractAddress);
