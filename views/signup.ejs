@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/index.css" />
     <link rel="stylesheet" href="/css/login.css" />
+    <link rel="stylesheet" href="/css/app.css" />
   </head>
   <body>
     <section class="prompt">
@@ -36,7 +37,9 @@
         <% if (error) { %>
         <h2><%= errorMessage %></h2>
         <% } %>
-        <button type="submit">Sign up</button>
+        <div class="text-align-center">
+          <button class="btn default" type="submit">Sign up</button>
+        </div>
       </form>
       <hr />
       <p class="help">Already have an account? <a href="/login">Sign in</a></p>
@@ -49,6 +52,7 @@
         >
       </p>
       <p>For the Sustainable Blockchain Hackathon</p>
+      <a href="/help.html">Help</a>
     </footer>
   </body>
 </html>
