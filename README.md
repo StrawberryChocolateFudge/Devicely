@@ -76,8 +76,9 @@ You can find it [here](https://github.com/StrawberryChocolateFudge/Devicely_Escr
 It uses Hardhat and Parcel and this repo is a fork of an escrow I developed before.
 Here is how it works:
 
-- When clicking the buy button on a device page, they are prompted to call the smart contract function **create Escrow**, when the escrow is created an order will be created too,
-  the buyer is then redirected and prompted to deposit the payment into the escrow.
+- When clicking the buy button on a device page, you are prompted to call the smart contract function **create Escrow**, after tnks the escrow is created and an order will be created too.
+
+The buyer is then redirected and prompted to deposit the payment into the escrow.
 
 The escrow has multiple states:
 
@@ -95,9 +96,9 @@ The job of the escrow agent is described in a ricardian contract that is directl
 
 The ricardian contract was created for with a project that I have been working on before, you can find more information about it [here](https://ricardianfabric.com).
 
-in a nutshell, a website is rendered from a legal written contract and it's uploaded to IPFS. It has a built-in way to connec to a smart contract, similar to how an NFT is connected to an image.
+in a nutshell, a website is rendered from a legal written contract and it's uploaded to IPFS. It has a way to connect to a smart contract, similar to how an NFT is connected to an image.
 
-So this ricardian contract explains how the escrow agent resolves disputes and only participants who sign it can use the escrow.
+This ricardian contract explains how the escrow agent resolves disputes and only participants who sign it can use the escrow.
 
 ## Dev
 
