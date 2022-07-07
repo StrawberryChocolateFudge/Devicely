@@ -48,6 +48,10 @@ When the buy button is clicked, first the user is prompted to sign written contr
 
 After this the user will be able to call a "Create Escrow" function when buying something. How the escrow works is explaned later.
 
+##### Search and Manage
+
+You can find other sellers devices by using the search or you can your edit own devices you are selling.
+
 ##### Orders
 
 The server also handles the orders and users can request dispute resolution if their orders are not arriving. Orders can be marked shipped or rejected by the seller.
