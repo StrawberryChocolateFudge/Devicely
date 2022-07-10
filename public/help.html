@@ -21,9 +21,139 @@
       </nav>
     </section>
     <header class="header">
-      <h1>Help</h1>
+      <h1 class="text-align-center">Help</h1>
     </header>
+    <section>
+      <article>
+        <h3>What is Devicely</h3>
+        <p>
+          Devicely is a marketplace where users can upload videos of electronic
+          devices and sell them with escrow.
+        </p>
+        <p>Currently on Rinkeby testnet!</p>
+      </article>
 
+      <article>
+        <h3>How to sign up?</h3>
+        <p>
+          Navigate to the <a href="/signup">/signup</a> page and type your
+          username and password. If your username is unique, you can register.
+        </p>
+      </article>
+      <article>
+        <h3>What can I sell here?</h3>
+        <p>
+          Anything as long as it's an electronic device, it can be new, used or
+          completely broken.
+        </p>
+      </article>
+      <article>
+        <h3>How to find electronic devices?</h3>
+        <p>You can search for listed devices after signing up!</p>
+      </article>
+      <article>
+        <h3>How to create a new device listing?</h3>
+        <p>
+          Navigate to <a href="/mydevices">My Devices</a> and click on the
+          <strong>Add New Device</strong> button
+        </p>
+      </article>
+      <article>
+        <h3>How to update a device listing?</h3>
+        <p>
+          After you listed a device you can see it on
+          <a href="/mydevices">My Devices</a>, click on the EDIT button
+        </p>
+      </article>
+      <article>
+        <h3>How to use device listing pages?</h3>
+        <p>
+          After you created a device listing, you can access a direct link to
+          it. This link can be shared with anyone. You can see the device
+          listing page on <a href="/mydevices">My Devices</a>, click on the LINK
+          button.
+        </p>
+      </article>
+      <article>
+        <h3>How to list a device for free?</h3>
+        <p>If you want to donate the device, just put 0 as price.</p>
+      </article>
+      <article>
+        <h3>How the escrow works?</h3>
+        <p>
+          All listings with a price higher than 0 will need to create an escrow.
+          This means the buyer will need to call a smart contract with metamask.
+          After this is done, the page will redirect to the escrow page. After
+          signing the escrow terms and conditions, the buyer will need to
+          deposit payment into the escrow.
+        </p>
+        <h5>What are the escrow states?</h5>
+        <ul>
+          <li>
+            Awaiting Payment : It means the buyer didn't deposit anything,yet.
+          </li>
+          <li>
+            Awaiting Delivery : This state means the buyer payed and the seller
+            needs to ship the product
+          </li>
+          <li>
+            Delivered : If the package has been delivered, the buyer needs to
+            change the escrow state to delivered. This means the seller can pull
+            payments.
+          </li>
+          <li>
+            Refunded : If there was a dispute or the seller decided to refund
+            the order, he can do so and in this state the buyer can pull his
+            refund.
+          </li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>How orders work?</h3>
+        <p>
+          Orders are created when somebody clicks the buy button on a device
+          listing page. You can find your orders on the
+          <a href="/orders">/orders</a> page. Orders can have an escrow or they
+          are free.
+        </p>
+        <hr />
+        <h5>What are the order states?</h5>
+        <ul>
+          <li>
+            Pending : All the orders created are pending. The seller needs to
+            either ship or reject the order.
+          </li>
+          <li>Shipped : The order can be marked shipped.</li>
+          <li>Rejected : The order can be rejected by the seller.</li>
+        </ul>
+        <p>
+          Good to know: The escrow and the order states are separate. When
+          shipping products, make sure you use the two together. Only ship after
+          payment has been deposited!
+        </p>
+      </article>
+      <article>
+        <h3>How does dispute resolution work?</h3>
+        <p>
+          Each order has a dispute button. Press this if your order has has not
+          arrived.
+        </p>
+        <p>
+          The escrow agent can resolve disputes involving the escrow payments.
+        </p>
+        <ul>
+          <li>
+            The escrow can be set to delivered so the seller can pull payments.
+          </li>
+          <li>The escrow can be refunded to the buyer.</li>
+        </ul>
+        <p>
+          This app is not on mainnet, we give no warranty of any kind. Untill we
+          arrive on mainnet, the dispute resolution may not function.
+        </p>
+      </article>
+    </section>
     <hr />
     <footer class="info">
       <p>
