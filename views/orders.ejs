@@ -64,12 +64,16 @@
             </div>
           </td>
           <td>
+            <% if(myorders[i].price === 0) {%>
+            <div class="tableButtonWrapper">Free</div>
+            <% }%> <% if(myorders[i].price !== 0) {%>
             <div class="tableButtonWrapper">
               <a
                 href="<%=escrowURL %>?escrow=<%=myorders[i].escrow_number %>&price=<%=myorders[i].price %>"
                 ><img src="/img/escrow.svg" width="50px"
               /></a>
             </div>
+            <% }%>
           </td>
 
           <td>
