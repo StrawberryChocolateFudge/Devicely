@@ -16,6 +16,28 @@ buyButton.onclick = async function () {
   await requestAccounts();
   const contract = await getContract(web3, contractAddress);
   const address = await getAddress(web3);
+
+  if (parseInt(shippingPrice) === 0) {
+    await fetchCreateOrder(
+      JSON.stringify({
+        escrowNumber: 0,
+        sellerAddress,
+        buyerAddress: address,
+        deviceHashIdentifier,
+        price: shippingPrice,
+      }),
+      0,
+      shippingPrice
+    );
+    return;
+  }
+
+  const addressSignedUp = await checkAddress(address);
+
+  if (!addressSignedUp) {
+    return;
+  }
+
   const acceptedTerms = await getAcceptedTerms(contract, address);
   if (!acceptedTerms) {
     const termsUrl = await getTerms(contract, address);
@@ -69,13 +91,38 @@ async function fetchCreateOrder(body, escrowNumber, price) {
     if (res.status === 200) {
       // redirect to the escrow page
       // with the escrow number and price!
-      window.location = `${escrowURL}?escrow=${escrowNumber}&price=${price}`;
+      if (parseInt(price) !== 0) {
+        window.location = `${escrowURL}?escrow=${escrowNumber}&price=${price}`;
+      } else {
+        //redirect to orders
+        window.location = `${serverAddress}orders`;
+      }
     } else {
       //Render an error
       alertMe("red", await res.text());
     }
   } catch (err) {
     alertMe("red", err.message);
+  }
+}
+
+async function checkAddress(address) {
+  const res = await fetch(serverAddress + "checkaddress", {
+    method: "POST",
+    body: JSON.stringify({ address }),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (res.status === 200) {
+    return true;
+  } else {
+    const messagejson = await res.json();
+    const msg = messagejson.message;
+    alertMe("signup", msg);
+    return false;
   }
 }
 
@@ -157,6 +204,17 @@ function alertMe(type, msg) {
     alertEl.style.backgroundColor = "dodgerblue";
     content = `Please wait for the transaction to be processed and don't close this window!`;
     alertEl.innerHTML = content;
+  } else if (type === "signup") {
+    alertEl.style.backgroundColor = "dodgerblue";
+    const anchor = document.createElement("a");
+    anchor.href = "https://devicely.xyz/signup";
+    anchor.textContent = "SIGN UP";
+    content = ` Please sign up to devicely.xyz to continue `;
+
+    alertEl.innerHTML = content;
+
+    alertEl.appendChild(anchor);
   }
+
   alertEl.style.display = "block";
 }
