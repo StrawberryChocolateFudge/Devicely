@@ -55,8 +55,8 @@ export function validateSettings(body: any): boolean {
 }
 
 export function validateCreateOrder(body: any): boolean {
+  // I'm not validating escrow number because of the 0 price orders
   const props = [
-    "escrowNumber",
     "sellerAddress",
     "buyerAddress",
     "deviceHashIdentifier",
