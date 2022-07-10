@@ -612,7 +612,7 @@ router.post(
     //Anyone can call this endpoint,
     // however there are checks to make sure seller and buyer and the product exists!
 
-    const {
+    let {
       escrowNumber,
       sellerAddress,
       buyerAddress,
@@ -626,23 +626,29 @@ router.post(
       return res.status(400).send("Invalid Request");
     }
 
-    // Validate Escrow Number using web3.js!
-
-    const web3 = getWeb3(rpcURL);
-
-    const contract = await getContract(web3, contractAddress);
-
-    const details = await getDetailByIndex(contract, escrowNumber);
-
-    if (!details.initialized) {
-      return res.status(400).send("Invalid Escrow");
+    if (escrowNumber === undefined) {
+      escrowNumber = 0;
     }
 
-    if (details.buyer !== buyerAddress) {
-      return res.status(400).send("Invalid Escrow");
-    }
-    if (details.seller !== sellerAddress) {
-      return res.status(400).send("Invalid Escrow");
+    // If an order is free then I don't need escrow number
+    // Because of that I'm only doing this check if escrowNumber is bigger than zero
+    if (parseInt(escrowNumber) > 0) {
+      const web3 = getWeb3(rpcURL);
+
+      const contract = await getContract(web3, contractAddress);
+
+      const details = await getDetailByIndex(contract, escrowNumber);
+
+      if (!details.initialized) {
+        return res.status(400).send("Invalid Escrow");
+      }
+
+      if (details.buyer !== buyerAddress) {
+        return res.status(400).send("Invalid Escrow");
+      }
+      if (details.seller !== sellerAddress) {
+        return res.status(400).send("Invalid Escrow");
+      }
     }
 
     db.get(
@@ -783,13 +789,14 @@ router.get(
           return res.status(404).send("Not Found");
         }
         const details = await getDetails(orderRow.escrow_number);
-
+        const price = fromDBPrice(orderRow.price);
         const orderDetails = {
           status: orderRow.status,
           seller_address: orderRow.seller_address,
           buyer_address: orderRow.buyer_address,
-          price: fromDBPrice(orderRow.price),
-          escrowState: escrowStateConverter(details.state),
+          price,
+          escrowState:
+            price === "0.00" ? "None" : escrowStateConverter(details.state),
           orderid: orderRow.id,
         };
         //@ts-ignore
@@ -948,7 +955,6 @@ router.post(
     }
 
     const { orderid } = req.body;
-    console.log(orderid);
 
     db.get(
       "SELECT * FROM orders WHERE id = ?",
@@ -1017,8 +1023,6 @@ router.post(
           order.id,
           order.escrow_number
         );
-        console.log(sellerDetails.emailAddress);
-        console.log(buyerDetails.emailAddress);
         await sendMail(
           sellerDetails.emailAddress,
           subject,
@@ -1035,6 +1039,47 @@ router.post(
     );
   }
 );
+
+// A endpoint that will check if an address is used by one of the users or not
+router.post(
+  "/checkaddress",
+  async function (req: Request, res: Response, next: CallableFunction) {
+    const { address } = req.body;
+    if (address === undefined) {
+      return res.status(400).json({
+        message: "Address is undefined",
+        usermissing: false,
+      });
+    }
+
+    const userdetails = await getUserDetailsByETHAddress(address);
+
+    if (userdetails === undefined) {
+      return res.status(400).json({
+        message: "User with address not found.",
+        usermissing: true,
+      });
+    } else {
+      console.log(userdetails);
+      return res.status(200).json({ message: "", usermissing: false });
+    }
+  }
+);
+
+async function getUserDetailsByETHAddress(address: string) {
+  return await new Promise((resolve, reject) => {
+    db.get(
+      "SELECT* FROM userdetails WHERE ethWalletAddress = ?",
+      [address],
+      function (err, row) {
+        if (err) {
+          reject(err);
+        }
+        resolve(row);
+      }
+    );
+  });
+}
 
 async function getUserDetailsByOwnerId(id: string) {
   return await new Promise((resolve, reject) => {
