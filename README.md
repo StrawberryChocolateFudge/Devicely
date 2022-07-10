@@ -2,6 +2,8 @@
 
 This application is a marketplace to buy-sell used electronic devices.
 
+Check out the website: [devicely.xyz](https://devicely.xyz)
+
 It was built for the Sustainable Blockchain Hackathon. It is an attempt to fix the E-Waste crisis by providing a platform for recycleable or still useful electronic devices.
 
 Anyone can sell on this market, who has unused smartphones, laptops or other devices laying around (like an old broken microwave) and earn crypto.
