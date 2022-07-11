@@ -407,6 +407,7 @@ router.post(
           escrowURL,
         };
         const deviceHashIdentifier = createDeviceIdentifier(pageData);
+
         const page = await ejs.renderFile("views/device.ejs", {
           ...pageData,
           deviceHashIdentifier,
@@ -519,7 +520,7 @@ router.post(
         }
 
         const pageData = {
-          videoPath,
+          videoPath: videoPath.path,
           name: devicename,
           description: devicedescription,
           works: worksBool ? "Working" : "Doesn't work",
@@ -540,7 +541,6 @@ router.post(
         };
 
         const deviceHashIdentifier = createDeviceIdentifier(pageData);
-
         const page = await ejs.renderFile("views/device.ejs", {
           ...pageData,
           deviceHashIdentifier,
@@ -1060,7 +1060,6 @@ router.post(
         usermissing: true,
       });
     } else {
-      console.log(userdetails);
       return res.status(200).json({ message: "", usermissing: false });
     }
   }
