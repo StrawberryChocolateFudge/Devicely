@@ -92,7 +92,8 @@ async function fetchCreateOrder(body, escrowNumber, price) {
       // redirect to the escrow page
       // with the escrow number and price!
       if (parseInt(price) !== 0) {
-        window.location = `${escrowURL}?escrow=${escrowNumber}&price=${price}`;
+        const redirectPrice = parseFloat(price) * 100;
+        window.location = `${serverAddress}escrow.html?escrow=${escrowNumber}&price=${redirectPrice}`;
       } else {
         //redirect to orders
         window.location = `${serverAddress}orders`;
